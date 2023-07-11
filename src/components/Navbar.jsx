@@ -1,7 +1,7 @@
 import React from 'react'
 
-export const Navbaar = () => {
+export const Navbar = () => {
   return (
-    <div>Navbaar</div>
+    <div></div>
   )
 }
