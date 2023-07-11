@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 
 
 export const HotelDesc = (props) => {
@@ -21,16 +21,20 @@ export const HotelDesc = (props) => {
 
   return (
     <div className='hotelpage'>
+      <img src={hotel.imgLink}/>
       <div>
-        <h1>{hotel.location}</h1>
-        <h2>{hotel.name}</h2>
-        <h2>{hotel.longDesc}</h2>
+        <h1>{hotel.name}</h1>
+        <p>{hotel.location}</p>
+        <p>Rs: {hotel.price}/-</p>
+        <p>{hotel.pool}</p>
+        <p>{hotel.longDesc}</p>
       </div>
 
 
-    <div className='hoteldesc'>
-      {/* {hotel.map((hotelInfo) => 
-      <HotelInfo data={hotelInfo}/>)} */}
+    <div className='Book'>
+     <Link to={'/touristinfo'}>
+      <button>Book Now</button>
+     </Link>
     </div>
     </div>
   )
