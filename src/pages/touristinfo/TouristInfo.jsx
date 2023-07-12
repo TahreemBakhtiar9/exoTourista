@@ -1,7 +1,33 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
 
-export const TouristInfo = ({hotel}) => {
+
+export const TouristInfo = () => {
+  const {id} = useParams();
   const[touristInfo, setTouristInfo] = useState("")
+
+
+  // const [hotel, setHotel] = useState([]);
+
+  const {state} = useLocation();
+
+  let hotel = state.hotel;
+
+  console.log({price: hotel.price})
+
+  // useEffect(() => {
+  //   fetch(`http://localhost:8080/exotourista/hotel/get/${id}`)
+  //   .then((response) => response.json())
+  //   .then((data) => {
+  //     console.log(data)
+  //     setHotel(data)
+    
+  //   })
+  //   .catch((error) => console.error('Error: ', error));
+    
+  // } , []);
+
+
   
   const[error, setError] = useState([]);
   const[formData, setFormData] = useState({
@@ -12,9 +38,10 @@ export const TouristInfo = ({hotel}) => {
     endDate:"",
     totalPrice:"",
     subTotal:"",
-
-});
-const handleInputChange = (e) => {
+    
+  });
+  const{name,address,email,startDate,endDate,totalPrice,subTotal}=formData;
+  const handleInputChange = (e) => {
   const {name, value} =e.target;
   setFormData((prev) => ({
     ...prev,[name]:value,
@@ -27,8 +54,8 @@ const [withTax, setWithTax] = useState('');
 
 const numOfNightsPrice = () => {
   const hotelPrice = hotel.price;
-  const arrival = new Date(startDate);
-  const departure = new Date(endDate);
+  const arrival = new Date(formData.startDate);
+  const departure = new Date(formData.endDate);
   const noOfNights = (departure - arrival) / (1000*60*60*24)
   
   return (hotelPrice * noOfNights)
@@ -37,30 +64,32 @@ const numOfNightsPrice = () => {
 const TaxPrice = () => {
   const tax = 0.12;
   const totalPrice = numOfNightsPrice();
-  return (totalPrice*tax)
+  const priceWithTax = totalPrice * tax;
+  // setPrice(priceWithTax)
+  return (priceWithTax)
 }
 
-const subTotal = () => {
+const subTotals = () => {
   const totalPrice = numOfNightsPrice();
   const totalTax = TaxPrice();
   const subTotal = totalPrice + totalTax;
-  return (subTotal);
+  return subTotal;
 }
 
 const handleSubmitForm = async(e) => {
   e.preventDefault();
 
-  try{
+ 
     const newTouristInfo = {
       name:formData.name,
       address:formData.address,
       email:formData.email,
       startDate:formData.startDate,
       endDate: formData.endDate,
-      totalPrice: "",
-      subTotal: "",
+      totalPrice: formData.totalPrice,
+      subTotal: formData.subTotal,
     };
-
+    console.log(newTouristInfo)
     const response = await fetch(`http://localhost:8080/exotourista/tourist/post`,{
           method: "POST",
           headers: {
@@ -71,15 +100,13 @@ const handleSubmitForm = async(e) => {
         if(response.ok){
           console.log("data saved, apply navigation here")
         
-        // .then((response) => response.json())
-        // .then((data)=> setFormData(data))
-        // .catch((error)=> console.error('Error: ' ,error))
+        .then((response) => response.json())
+        .then((data)=> setFormData(data))
+        .catch((error)=> console.error('Error: ' ,error))
       
       }
-  }
-  catch(error){
-    console.error(error);
-  }
+  
+ 
 // useEffect(async() => {
 //   await fetch(`http://localhost:8080/exotourista/tourist/post`,{
 //     method: "POST",
@@ -95,23 +122,67 @@ const handleSubmitForm = async(e) => {
 }
 
   return (
+    <>
+   
+
+   <div>
+        <h1>Confirmation</h1>
+          
+        <form onSubmit={handleSubmitForm}>
+        <label>Name</label>
+        <br/>
+        <input type='text' name='name' value={name} onChange={handleInputChange}/>
+        <br/>
+        <br/>
+
+        <label>Email Address</label>
+        <br/>
+        <input type='text' name='email' value={email} onChange={handleInputChange}/>
+        <br/>
+        <br/>
+
+        <label>Address</label>
+        <br/>
+        <input type='text' name='address' value={address} onChange={handleInputChange} />
+
+        <br/>
+        <br/>
+
+        <label>Checkin Date</label>
+        <br/>
+        <input type='date' name='startDate' value={startDate} onChange={handleInputChange}/>
+        <br/>
+        <br/>
+
+        <label>Checkout Date</label>
+        <br/>
+        <input type='date' name='endDate' value={endDate} onChange={handleInputChange}/>
+        <br/>
+        <br/>
+
+        <br/>
+        {/* <input type='readonly'/> */}
+        <br/>
+        <br/>
 
 
-    <div>
-      <div class="mb-3" style={{margin:"40px", display:'flex'}}>
-    <label for="exampleFormControlInput1" className="form-label">Email address</label>
-    <input type="email" className="form-control" id="exampleFormControlInput1" placeholder="name@example.com"/>
-  
+        <label> Total Price:</label>
+        <br/>
+        <input value={numOfNightsPrice()} readOnly/>
+        <br/>
+        <br/>
 
-  
-  <label for="exampleFormControlInput1" class="form-label">Email address</label>
-  <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com"/>
+        <label>Sub Total with Tax:{subTotal}</label>
+        <br/>
+        <input value={TaxPrice()} readOnly/>
+        <br/>
+        <br/>
+        <input type='submit'/>
+        </form>
+        
+        
+    </div>
 
-  </div>
-  <div class="mb-3">
-    <label for="exampleFormControlTextarea1" class="form-label">Example textarea</label>
-    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-  </div>
-  </div>
+    </>
   )
 }

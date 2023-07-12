@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams,Link } from 'react-router-dom';
-
+import { useNavigate, useParams } from 'react-router-dom';
 
 export const HotelDesc = () => {
+  
+  const navigate = useNavigate()
   const {id} = useParams();
   const [hotel, setHotel] = useState([]);
 
@@ -16,7 +17,7 @@ export const HotelDesc = () => {
     })
     .catch((error) => console.error('Error: ', error));
     
-  } , []);
+  } , [id]);
 
 
   return (
@@ -32,9 +33,9 @@ export const HotelDesc = () => {
 
 
     <div className='Book'>
-     <Link to={'/touristinfo'}>
-      <button>Book Now</button>
-     </Link>
+     {/* <Link to={`/touristinfo/${id}`}> */}
+      {hotel && <button onClick={() => navigate('/touristinfo', {state: {hotel}})} >Book Now</button>}
+     {/* </Link> */}
     </div>
     </div>
   )
