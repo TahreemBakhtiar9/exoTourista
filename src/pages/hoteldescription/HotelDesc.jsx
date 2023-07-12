@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams,Link } from 'react-router-dom';
 
 
-export const HotelDesc = (props) => {
+export const HotelDesc = () => {
   const {id} = useParams();
   const [hotel, setHotel] = useState([]);
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-export const TouristInfo = () => {
+export const TouristInfo = ({hotel}) => {
   const[touristInfo, setTouristInfo] = useState("")
   
   const[error, setError] = useState([]);
@@ -20,6 +20,32 @@ const handleInputChange = (e) => {
     ...prev,[name]:value,
   }));
 };
+
+// const [nights, setNights] = useState('');
+const [price, setPrice] = useState('');
+const [withTax, setWithTax] = useState('');
+
+const numOfNightsPrice = () => {
+  const hotelPrice = hotel.price;
+  const arrival = new Date(startDate);
+  const departure = new Date(endDate);
+  const noOfNights = (departure - arrival) / (1000*60*60*24)
+  
+  return (hotelPrice * noOfNights)
+}
+
+const TaxPrice = () => {
+  const tax = 0.12;
+  const totalPrice = numOfNightsPrice();
+  return (totalPrice*tax)
+}
+
+const subTotal = () => {
+  const totalPrice = numOfNightsPrice();
+  const totalTax = TaxPrice();
+  const subTotal = totalPrice + totalTax;
+  return (subTotal);
+}
 
 const handleSubmitForm = async(e) => {
   e.preventDefault();
